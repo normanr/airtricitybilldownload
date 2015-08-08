@@ -43,7 +43,7 @@ bill.addheaders = br.addheaders
 bill.set_cookiejar(cj)
 
 # Index - Get php session cookie
-br.open('https://my.airtricity.com/oss_web/login.htm')
+br.open('https://my.sseairtricity.com/oss_web/login.htm')
 
 # Login
 br.select_form(name='loginForm')
@@ -59,7 +59,7 @@ br.open('account-history.htm?paymentMode=billsOnly')
 html = br.response().read()
 soup = BeautifulSoup.BeautifulSoup(html)
 
-for a in soup.find(id='history').findAll('a'):
+for a in soup.find(id='acc-history').findAll('a'):
 
   bill.open(urlparse.urljoin(br.geturl(), a['href']))
 
