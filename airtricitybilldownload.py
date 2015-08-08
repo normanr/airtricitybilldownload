@@ -37,7 +37,7 @@ def debug():
   bill.set_debug_responses(True)
 
 cj = mechanize.CookieJar()
-br.addheaders = [('User-Agent', 'airtricitybilldownload/0.1')]
+br.addheaders = [('User-Agent', 'airtricitybilldownload/0.2')]
 br.set_cookiejar(cj)
 bill.addheaders = br.addheaders
 bill.set_cookiejar(cj)
