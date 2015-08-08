@@ -59,9 +59,24 @@ br.open('account-history.htm?paymentMode=billsOnly')
 html = br.response().read()
 soup = BeautifulSoup.BeautifulSoup(html)
 
-for a in soup.find(id='acc-history').findAll('a'):
+customer_id = soup.find('input', {'name':'customerId'})['value']
 
-  bill.open(urlparse.urljoin(br.geturl(), a['href']))
+for tr in soup.find(id='acc-history').findAll('tr'):
+
+  if not tr.findAll('td'):
+    continue  # heading line
+
+  statement_date = datetime.datetime.strptime(tr.td.text, '%d %b %Y')
+
+  localPdf = 'airtricity-%s-%s.pdf' % (
+      customer_id, statement_date.strftime('%Y-%m'))
+
+  if os.path.exists(localPdf):
+    continue
+
+  print 'Fetching %s...' % localPdf
+
+  bill.open(urlparse.urljoin(br.geturl(), tr.a['href']))
 
   bill_html = bill.response().read()
   bill_soup = BeautifulSoup.BeautifulSoup(bill_html)
@@ -71,17 +86,6 @@ for a in soup.find(id='acc-history').findAll('a'):
   bill_href = bill_a['href']
   query = urlparse.urlparse(bill_href).query
   parts = urlparse.parse_qs(query)
-
-  customer_id = bill_soup.find('input', {'name':'customerId'})['value']
-  statement_date = datetime.datetime.strptime(parts['secondaryId'][0], '%Y%m%d')
-
-  localPdf = 'airtricity-%s-%s.pdf' % (
-      customer_id, statement_date.strftime('%Y-%m'))
-
-  if os.path.exists(localPdf):
-    continue
-
-  print 'Fetching %s...' % localPdf
 
   pdf_data = bill.open(bill_href).read()
 
